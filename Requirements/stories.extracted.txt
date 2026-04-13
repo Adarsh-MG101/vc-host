@@ -1,0 +1,18 @@
+VerifyCerts Extracted Stories
+
+1. Superadmin can log in with env-configured credentials and access a global overview dashboard.
+2. Superadmin can create organizations and provision owner accounts.
+3. Superadmin can edit organization details and activate/deactivate organizations.
+4. Superadmin can review and export cross-organization activity logs.
+5. Organization users (owner/admin/member) can authenticate and access role-appropriate modules.
+6. Organization users can update profile and change password.
+7. Organization users can upload DOCX templates and detect placeholders.
+8. Template engine supports special placeholders: QR_CODE, CERTIFICATE_ID, DATE.
+9. Organization users can generate single certificates as PDFs.
+10. Organization users can generate bulk certificates from CSV/Excel and download ZIP.
+11. Organization users can send certificates through SMTP.
+12. Certificates can be searched, filtered, viewed, downloaded, and deleted.
+13. Owner/Admin can create custom roles and assign roles to organization users.
+14. Organization activity logs are searchable/exportable.
+15. Public users can verify certificates by QR or certificate ID with no authentication.
+16. Tenant isolation ensures organization data is segregated while superadmin retains global oversight.
