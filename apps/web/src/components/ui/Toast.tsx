@@ -26,6 +26,7 @@ export const Toast: React.FC<ToastProps> = ({
       const timer = setTimeout(onClose, duration);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [isVisible, duration, onClose]);
 
   if (!isVisible) return null;
