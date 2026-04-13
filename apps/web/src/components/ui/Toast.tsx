@@ -22,11 +22,10 @@ export const Toast: React.FC<ToastProps> = ({
   duration = 5000 
 }) => {
   useEffect(() => {
-    if (isVisible && duration > 0) {
-      const timer = setTimeout(onClose, duration);
-      return () => clearTimeout(timer);
-    }
-    return undefined;
+    if (!isVisible || duration <= 0) return;
+
+    const timer = setTimeout(onClose, duration);
+    return () => clearTimeout(timer);
   }, [isVisible, duration, onClose]);
 
   if (!isVisible) return null;
