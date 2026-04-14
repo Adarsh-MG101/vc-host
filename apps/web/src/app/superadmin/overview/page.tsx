@@ -12,9 +12,18 @@ import { Table } from '../../../components/ui/Table';
 import { StatCard } from '../../../components/ui/StatCard';
 
 import { useDashboard } from '../../../hooks/useDashboard';
+import { useAdminActivity } from '../../../hooks/useAdminActivity';
+import { Pagination } from '../../../components/ui/Pagination';
 
 export default function OverviewPage() {
-  const { stats, isLoading } = useDashboard();
+  const { stats, isLoading: isStatsLoading } = useDashboard();
+  const { 
+    activities, 
+    pages, 
+    currentPage, 
+    setPage, 
+    isLoading: isActivityLoading 
+  } = useAdminActivity({ limit: 8, page: 1 });
 
   const statCards = [
     { 
@@ -59,8 +68,8 @@ export default function OverviewPage() {
       header: 'ACTION', 
       accessor: (a: any) => (
         <div className="flex flex-col">
-          <p className="text-[11px] font-black text-brand-navy uppercase tracking-widest">{a.action}</p>
-          <p className="text-[10px] text-gray-400 font-medium truncate max-w-[200px]">{a.details}</p>
+          <p className="text-[11px] font-black text-brand-navy uppercase tracking-widest">{a.type.replace(/_/g, ' ')}</p>
+          <p className="text-[10px] text-gray-400 font-medium truncate max-w-[200px]">{a.metadata?.details || 'System log'}</p>
         </div>
       )
     },
@@ -68,8 +77,8 @@ export default function OverviewPage() {
       header: 'USER', 
       accessor: (a: any) => (
         <div className="flex flex-col">
-          <p className="text-[11px] font-bold text-gray-700">{a.user?.name || 'Unknown'}</p>
-          <p className="text-[10px] text-gray-400">{a.user?.email || '-'}</p>
+          <p className="text-[11px] font-bold text-gray-700">{a.userId?.name || 'Unknown'}</p>
+          <p className="text-[10px] text-gray-400">{a.userId?.email || '-'}</p>
         </div>
       )
     },
@@ -117,7 +126,7 @@ export default function OverviewPage() {
             icon={stat.icon}
             gradient={stat.gradient}
             description={stat.description}
-            isLoading={isLoading}
+            isLoading={isStatsLoading}
             delay={i * 0.1}
           />
         ))}
@@ -137,13 +146,25 @@ export default function OverviewPage() {
           </button>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
           <Table 
-            data={stats?.recentActivity || []} 
+            data={activities} 
             columns={activityColumns} 
-            isLoading={isLoading} 
+            isLoading={isActivityLoading} 
           />
-          {(!isLoading && (!stats?.recentActivity || stats.recentActivity.length === 0)) && (
+          
+          {pages > 1 && (
+            <div className="p-4 border-t border-gray-50 bg-gray-50/30">
+              <Pagination 
+                currentPage={currentPage} 
+                totalPages={pages} 
+                onPageChange={setPage} 
+                isLoading={isActivityLoading}
+              />
+            </div>
+          )}
+
+          {(!isActivityLoading && activities.length === 0) && (
             <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
               <ActivityIcon size={48} className="text-gray-200" />
               <p className="text-xs font-black text-gray-300 uppercase tracking-widest italic">No platform activity recorded yet</p>

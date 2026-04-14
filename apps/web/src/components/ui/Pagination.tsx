@@ -30,6 +30,7 @@ export const Pagination: React.FC<PaginationProps> = ({
   return (
     <div className="flex items-center justify-center space-x-2 font-sans select-none scale-90 sm:scale-100">
       <Button
+        type="button"
         variant="ghost"
         size="sm"
         onClick={() => onPageChange(currentPage - 1)}
@@ -66,6 +67,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       )}
 
       <Button
+        type="button"
         variant="ghost"
         size="sm"
         onClick={() => onPageChange(currentPage + 1)}
@@ -82,6 +84,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
 const PaginationButton = ({ page, current, onClick, disabled }: { page: number; current: number; onClick: (page: number) => void; disabled: boolean }) => (
   <button
+    type="button"
     onClick={() => onClick(page)}
     disabled={disabled}
     className={`

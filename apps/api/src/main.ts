@@ -1,8 +1,9 @@
 import dotenv from 'dotenv';
+import path from 'path';
 import { app } from './app';
 import { closeDatabaseConnection, connectToDatabase } from './config/db';
 
-dotenv.config({ path: 'apps/api/.env' });
+dotenv.config({ path: path.join(process.cwd(), 'apps/api/.env') });
 dotenv.config();
 
 const host = process.env.HOST ?? 'localhost';

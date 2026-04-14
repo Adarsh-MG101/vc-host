@@ -9,6 +9,7 @@ export async function connectToDatabase(): Promise<typeof mongoose> {
   }
 
   try {
+    console.log(`[db] Attempting connection to: ${dbName}`);
     const connection = await mongoose.connect(mongoUri, {
       dbName: dbName,
     });

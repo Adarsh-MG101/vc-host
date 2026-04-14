@@ -15,7 +15,7 @@ interface TableProps<T> {
   isLoading?: boolean;
 }
 
-export function Table<T extends { id: string | number }>({ 
+export function Table<T extends { id?: string | number; _id?: string | number }>({ 
   data, 
   columns, 
   onRowClick, 
@@ -23,7 +23,7 @@ export function Table<T extends { id: string | number }>({
 }: TableProps<T>) {
   return (
     <div className="w-full overflow-hidden transition-all duration-300">
-      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+      <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent relative">
         <table className="w-full text-left font-sans border-separate border-spacing-0">
           <thead>
             <tr className="bg-gray-50/50 border-b border-gray-100/50">
@@ -38,7 +38,7 @@ export function Table<T extends { id: string | number }>({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100/50">
-            {isLoading ? (
+            {isLoading && data.length === 0 ? (
               Array.from({ length: 5 }).map((_, i) => (
                 <tr key={i} className="animate-pulse">
                   {columns.map((_, j) => (
@@ -49,27 +49,30 @@ export function Table<T extends { id: string | number }>({
                 </tr>
               ))
             ) : data.length > 0 ? (
-              data.map((item) => (
-                <tr
-                  key={item.id}
-                  onClick={() => onRowClick?.(item)}
-                  className={`
-                    group transition-all duration-300 hover:bg-blue-50/30
-                    ${onRowClick ? 'cursor-pointer' : ''}
-                  `}
-                >
-                  {columns.map((column, index) => (
-                    <td 
-                      key={index} 
-                      className={`px-4 py-3 text-sm font-bold text-gray-900 tracking-tight transition-colors group-hover:text-amber-900 border-none ${column.className || ''}`}
-                    >
-                      {typeof column.accessor === 'function'
-                        ? column.accessor(item)
-                        : (item[column.accessor] as React.ReactNode)}
-                    </td>
-                  ))}
-                </tr>
-              ))
+              <>
+                {data.map((item) => (
+                  <tr
+                    key={item.id || item._id}
+                    onClick={() => onRowClick?.(item)}
+                    className={`
+                      group transition-all duration-300 hover:bg-blue-50/30
+                      ${onRowClick ? 'cursor-pointer' : ''}
+                      ${isLoading ? 'opacity-40 grayscale-[0.5]' : 'opacity-100'}
+                    `}
+                  >
+                    {columns.map((column, index) => (
+                      <td 
+                        key={index} 
+                        className={`px-4 py-3 text-sm font-bold text-gray-900 tracking-tight transition-colors group-hover:text-amber-900 border-none ${column.className || ''}`}
+                      >
+                        {typeof column.accessor === 'function'
+                          ? column.accessor(item)
+                          : (item[column.accessor] as React.ReactNode)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </>
             ) : (
               <tr>
                 <td 
@@ -82,6 +85,12 @@ export function Table<T extends { id: string | number }>({
             )}
           </tbody>
         </table>
+
+        {isLoading && data.length > 0 && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/5 pointer-events-none z-10">
+            <div className="w-8 h-8 border-2 border-brand-orange border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
       </div>
     </div>
   );

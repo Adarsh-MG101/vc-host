@@ -17,17 +17,20 @@ export const getDashboardStats = async (req: Request, res: Response) => {
       DocumentModel.countDocuments(),
       Activity.find()
         .populate('organization', 'name')
-        .populate('user', 'name email')
+        .populate('userId', 'name email')
         .sort({ createdAt: -1 })
         .limit(10)
     ]);
 
-    return res.json({
+    const stats = {
       totalOrgs,
       totalTemplates,
       totalCertificates,
       recentActivity
-    });
+    };
+
+    console.log('[Dashboard] Sending stats:', stats);
+    return res.json(stats);
   } catch (error) {
     console.error('[Dashboard] Error:', error);
     return res.status(500).json({ message: 'Failed to fetch dashboard stats' });
