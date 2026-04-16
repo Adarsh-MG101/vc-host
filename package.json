@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "web:serve": "nx serve web",
-    "api:serve": "nx serve api"
+    "api:serve": "nx serve api",
+    "seed": "ts-node apps/api/src/scripts/seed.ts"
   },
   "private": true,
   "devDependencies": {

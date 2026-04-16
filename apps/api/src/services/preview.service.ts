@@ -6,8 +6,31 @@ import { promisify } from 'util';
 
 const execPromise = promisify(exec);
 
-// Path to LibreOffice executable on Windows
-const LIBREOFFICE_PATH = '"C:\\Program Files\\LibreOffice\\program\\soffice.exe"';
+/**
+ * Automatically detects the LibreOffice binary path.
+ * Checks environment variable first, then common OS-specific installation paths.
+ */
+function getLibreOfficePath(): string {
+  if (process.env.LIBREOFFICE_PATH) return process.env.LIBREOFFICE_PATH;
+
+  if (process.platform === 'win32') {
+    const commonPaths = [
+      'C:\\Program Files\\LibreOffice\\program\\soffice.exe',
+      'C:\\Program Files (x86)\\LibreOffice\\program\\soffice.exe',
+    ];
+
+    for (const p of commonPaths) {
+      if (fs.existsSync(p)) return `"${p}"`;
+    }
+    // Fallback if not found in common paths
+    return 'soffice'; 
+  }
+
+  // Linux/macOS: assume it is in the PATH
+  return 'soffice';
+}
+
+const LIBREOFFICE_PATH = getLibreOfficePath();
 
 /**
  * Converts a .docx file to .pdf using LibreOffice in headless mode.

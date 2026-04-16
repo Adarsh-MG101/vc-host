@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { app } from './app';
 import { closeDatabaseConnection, connectToDatabase } from './config/db';
+import { setupDatabase } from './config/setup-db';
 
 dotenv.config({ path: path.join(process.cwd(), 'apps/api/.env') });
 dotenv.config();
@@ -12,6 +13,8 @@ const port = process.env.PORT ? Number(process.env.PORT) : 3333;
 async function bootstrap() {
   await connectToDatabase();
   console.log(`[db] connected successfully`);
+
+  await setupDatabase();
 
   const server = app.listen(port, host, () => {
     console.log(`[ready] http://${host}:${port}`);
