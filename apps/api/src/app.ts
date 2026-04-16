@@ -6,6 +6,7 @@ import { isDatabaseConnected } from './config/db';
 import authRoutes from './routes/auth';
 import superadminRoutes from './routes/superadmin';
 import organizationRoutes from './routes/organization';
+import verificationRoutes from './routes/public/verification.routes';
 
 export const app = express();
 
@@ -38,6 +39,7 @@ app.use(morgan('dev'));
 app.use('/api/auth', authRoutes);
 app.use('/api/superadmin', superadminRoutes);
 app.use('/api/organization', organizationRoutes);
+app.use('/api/verify', verificationRoutes);
 
 app.get('/', (_req, res) => {
   res.send({ message: 'Hello World from API' });

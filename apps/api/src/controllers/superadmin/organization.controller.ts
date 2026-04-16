@@ -5,6 +5,8 @@ import User from '../../models/User';
 import { sendCredentialsEmail } from '../../services/email.service';
 import Template from '../../models/Template';
 import Document from '../../models/Document';
+import { uploadToFolder, replaceFile, getPublicUrl, deleteFolder } from '../../services/s3.service';
+
 export const createOrganization = async (req: Request, res: Response) => {
   try {
     console.log('[CreateOrg] Start:', req.body);
@@ -13,8 +15,7 @@ export const createOrganization = async (req: Request, res: Response) => {
       orgSlug, 
       ownerName, 
       ownerEmail, 
-      ownerPassword,
-      logo
+      ownerPassword
     } = req.body;
 
     // Basic validation
@@ -63,8 +64,19 @@ export const createOrganization = async (req: Request, res: Response) => {
       slug: orgSlug.toLowerCase(),
       owner: ownerUser._id,
       status: 'active',
-      ...(logo && { logo })
     });
+
+    // Handle Logo Upload to S3
+    if (req.file) {
+      const s3Key = await uploadToFolder(
+        'logos',
+        organization._id.toString(),
+        req.file.originalname,
+        req.file.buffer,
+        req.file.mimetype
+      );
+      organization.logo = s3Key;
+    }
 
     await organization.save();
     console.log('[CreateOrg] Organization saved:', organization._id);
@@ -85,7 +97,10 @@ export const createOrganization = async (req: Request, res: Response) => {
     console.log('[CreateOrg] Success');
     res.status(201).json({
       message: 'Organization and owner created successfully',
-      organization,
+      organization: {
+        ...organization.toObject(),
+        logoUrl: organization.logo ? getPublicUrl(organization.logo) : null
+      },
       owner: {
         id: ownerUser._id,
         name: ownerUser.name,
@@ -118,6 +133,7 @@ export const getOrganizations = async (req: Request, res: Response) => {
 
         return {
           ...org,
+          logoUrl: org.logo ? getPublicUrl(org.logo) : null,
           membersList,
           stats: {
             members: membersList.length,
@@ -149,8 +165,33 @@ export const updateOrganization = async (req: Request, res: Response) => {
     if (slug) organization.slug = slug.toLowerCase();
     if (status) organization.status = status;
 
+    // Handle Logo Replacement
+    if (req.file) {
+      if (organization.logo) {
+        organization.logo = await replaceFile(
+          organization.logo,
+          'logos',
+          organization._id.toString(),
+          req.file.originalname,
+          req.file.buffer,
+          req.file.mimetype
+        );
+      } else {
+        organization.logo = await uploadToFolder(
+          'logos',
+          organization._id.toString(),
+          req.file.originalname,
+          req.file.buffer,
+          req.file.mimetype
+        );
+      }
+    }
+
     await organization.save();
-    return res.json(organization);
+    return res.json({
+      ...organization.toObject(),
+      logoUrl: organization.logo ? getPublicUrl(organization.logo) : null
+    });
   } catch (error) {
     return res.status(500).json({ message: 'Failed to update organization' });
   }
@@ -164,6 +205,14 @@ export const deleteOrganization = async (req: Request, res: Response) => {
     if (!organization) {
       return res.status(404).json({ message: 'Organization not found' });
     }
+
+    // Delete everything in S3 for this org
+    const orgIdStr = organization._id.toString();
+    await Promise.all([
+      deleteFolder(`logos/${orgIdStr}/`),
+      deleteFolder(`templates/${orgIdStr}/`),
+      deleteFolder(`certificates/${orgIdStr}/`)
+    ]).catch(err => console.error('[S3Cleanup] Error cleaning up org folders:', err));
 
     // Delete the organization
     await Organization.findByIdAndDelete(id);

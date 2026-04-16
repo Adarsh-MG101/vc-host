@@ -39,3 +39,34 @@ export const sendCredentialsEmail = async (email: string, name: string, password
     return false;
   }
 };
+export const sendCertificateEmail = async (email: string, subject: string, message: string, fileBuffer: Buffer, fileName: string) => {
+  const mailOptions = {
+    from: `"VerifyCerts Admin" <${process.env.SMTP_USER}>`,
+    to: email,
+    subject: subject || 'Your Certificate',
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #1e1b4b;">
+        <h2 style="color: #1e1b4b; border-bottom: 2px solid #F97316; padding-bottom: 10px;">Your Certificate is Ready!</h2>
+        <p>${message || 'Please find your generated certificate attached to this email.'}</p>
+        <div style="margin-top: 30px; border-top: 1px solid #e2e8f0; padding-top: 20px; text-align: center;">
+          <p style="font-size: 12px; color: #94a3b8;">&copy; 2026 VerifyCerts. All rights reserved.</p>
+        </div>
+      </div>
+    `,
+    attachments: [
+      {
+        filename: fileName,
+        content: fileBuffer,
+      },
+    ],
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`[Email] Certificate sent to ${email}`);
+    return true;
+  } catch (error) {
+    console.error(`[Email] Failed to send certificate to ${email}:`, error);
+    return false;
+  }
+};

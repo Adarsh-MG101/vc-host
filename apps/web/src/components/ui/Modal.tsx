@@ -74,7 +74,7 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className={`bg-white w-full ${sizes[size]} rounded-lg shadow-4xl relative z-10 overflow-hidden flex flex-col max-h-full border border-white/20`}
+            className={`bg-white w-full ${sizes[size]} rounded-lg shadow-4xl relative z-10 flex flex-col max-h-full border border-white/20`}
           >
             <div className="px-8 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
               <h2 className="text-xl font-extrabold text-brand-navy tracking-tight select-none">

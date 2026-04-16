@@ -7,6 +7,7 @@ import dashboardRoutes from './dashboard.routes';
 import profileRoutes from './profile.routes';
 import activityRoutes from './activity.routes';
 import templateRoutes from './template.routes';
+import documentRoutes from './document.routes';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/users', userRoutes);
 router.use('/profile', profileRoutes);
 router.use('/activity', activityRoutes);
 router.use('/templates', templateRoutes);
+router.use('/certificates', documentRoutes);
 
 export default router;

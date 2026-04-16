@@ -109,9 +109,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, onToggle }) => {
   const ownerNavItems: NavItem[] = [
     { href: ROUTES.ORGANIZATION.DASHBOARD, label: 'Dashboard', icon: <LayoutGrid size={18} /> },
     { href: ROUTES.ORGANIZATION.TEMPLATES, label: 'Templates', icon: <FileText size={18} /> },
-    { href: ROUTES.ORGANIZATION.CERTIFICATES, label: 'Certificates', icon: <Award size={18} />, disabled: true },
-    { href: ROUTES.ORGANIZATION.ROLES, label: 'Roles and Users', icon: <Users size={18} /> },
+    { href: ROUTES.ORGANIZATION.CERTIFICATES, label: 'Certificates', icon: <Award size={18} /> },
     { href: ROUTES.ORGANIZATION.ACTIVITY, label: 'Activity', icon: <Activity size={18} /> },
+    { href: ROUTES.ORGANIZATION.ROLES, label: 'Roles and Users', icon: <Users size={18} /> },
   ];
 
   const navItems = isOwner ? ownerNavItems : superadminNavItems;

@@ -61,7 +61,7 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({ value, onCha
       {/* Input Trigger */}
       <div 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-[200px] px-4 py-3.5 bg-white border border-gray-100 rounded-lg shadow-sm flex items-center justify-between cursor-pointer group transition-all hover:border-gray-200"
+        className="w-full px-4 py-3.5 bg-white border border-gray-100 rounded-lg shadow-sm flex items-center justify-between cursor-pointer group transition-all hover:border-gray-200"
       >
         <div className="flex items-center space-x-2 overflow-hidden">
           <CalendarIcon size={16} className={value ? "text-brand-navy" : "text-gray-400 group-hover:text-gray-600"} />
